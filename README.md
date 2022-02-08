@@ -1,2 +1,2 @@
-# fishnet_jungyuko
+# fishNet_JungyuKo
 FishNet implementation
