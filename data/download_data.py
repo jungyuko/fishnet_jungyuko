@@ -10,10 +10,6 @@ parser.add_argument('--t', default='train', type=str,
                     help='download data type(train/test)')
 args = parser.parse_args()
 
-
-## How to save a 3 channel numpy array to image ##
-## https://stackoverflow.com/questions/27600640/how-to-save-a-3-channel-numpy-array-as-image ##
-
 def unpickle(file):
     with open(file, 'rb') as fo:
         dict = pickle.load(fo, encoding='bytes')
@@ -35,8 +31,6 @@ def unpickle(file):
     for i in range(len(labels)):
         img2labels_dict[file_names[i].decode('utf-8')] = labels[i]
     
-    ## bytes to string ##
-    ## https://stackoverflow.com/questions/606191/convert-bytes-to-a-string ##
     for key, data in dict.items():
         if key == b'data':
             reshape_img = np.reshape(data, (10000,3,32,32))
@@ -65,6 +59,7 @@ if args.t == 'train':
 else:
     file = file_path+'test_batch'
     data, dic = unpickle(file)
-    
+    img2labels_dic.update(dic)
+
     with open('./test_img2labels.json', 'w') as f:
         json.dump(img2labels_dic, f, indent=4)
