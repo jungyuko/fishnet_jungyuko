@@ -7,7 +7,7 @@ import argparse
 parser = argparse.ArgumentParser(description='download cifar-10 dataset & prepare train and test')
 
 parser.add_argument('--t', default='train', type=str,
-                    help='download data type(train/test)')
+                    help='download data type(train/valid/test)')
 args = parser.parse_args()
 
 def unpickle(file):
@@ -16,6 +16,8 @@ def unpickle(file):
     
     if args.t == 'train':
         save_path = './train/'
+    elif args.t == 'valid':
+        save_path = './valid/'
     else:
         save_path = './test/'
     
@@ -46,14 +48,24 @@ def unpickle(file):
 
 file_path = './cifar-10-batches-py/'
 
+print('download {} dataset...'.format(args.t))
+
 img2labels_dic = {}
 if args.t == 'train':
-    for i in range(5):
+    for i in range(4):
         file = file_path+'data_batch_{}'.format(i+1)
         data, dic = unpickle(file)
         img2labels_dic.update(dic)
 
     with open('./train_img2labels.json', 'w') as f:
+        json.dump(img2labels_dic, f, indent=4)
+
+elif args.t == 'valid':
+    file = file_path+'data_batch_5'
+    data, dic = unpickle(file)
+    img2labels_dic.update(dic)
+
+    with open('./valid_img2labels.json', 'w') as f:
         json.dump(img2labels_dic, f, indent=4)
 
 else:
@@ -63,3 +75,5 @@ else:
 
     with open('./test_img2labels.json', 'w') as f:
         json.dump(img2labels_dic, f, indent=4)
+
+print('download finish!')
