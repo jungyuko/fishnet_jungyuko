@@ -70,7 +70,7 @@ FishNet
 
 
 ## Dataset
-* [CIFAR Dataset][https://www.cs.toronto.edu/~kriz/cifar.html]에서 CIFAR-10 Dataset 사용
+* [CIFAR Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)에서 CIFAR-10 Dataset 사용
 * Train Data로 50000장의 Image, Test Data로 10000장의 Image로 구성
 * 좋은 성능의 모델을 얻기 위해 Train Data를 (40000/10000)장의 이미지로 train/valid data 분류
 * (Train/Valid/Test) - (40000/10000/10000)장의 Image, GT-Label로 분류
