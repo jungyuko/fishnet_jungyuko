@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
 from models.blocks import Residual_Block, UR_Block, DR_Block
-import numpy as np
 
-class Bridge(nn.Module): # Bridge
+class Bridge(nn.Module):
     def __init__(self, in_channel):
         super(Bridge, self).__init__()
 
@@ -25,6 +24,7 @@ class Bridge(nn.Module): # Bridge
     def forward(self, x):
         out = self.bridge(x)
         return out*x + x
+
 
 
 class Score(nn.Module):
@@ -53,10 +53,12 @@ class Score(nn.Module):
     def forward(self, x):
         return self.pred(x)
 
+
+
 ###################################################################
 ## https://github.com/arabae/FishNet/blob/main/models/fishnet.py ##
-class FishNet(nn.Module):
 ###################################################################
+class FishNet(nn.Module):
     def __init__(self,
         n_tail: int=3,
         n_body: int=3,
@@ -75,7 +77,6 @@ class FishNet(nn.Module):
         self.downsample = nn.MaxPool2d(2, stride=2)
         self.upsample   = nn.Upsample(scale_factor=2)
 
-
         ############################################################################
         # https://github.com/kevin-ssy/FishNet/blob/master/models/fishnet.py #183 ##
         self.conv1 = self._conv_bn_relu(3, self.in_channel//2)
@@ -89,8 +90,7 @@ class FishNet(nn.Module):
         
         self.Score  = Score(self.channels[-1], 10, has_pool=True)
         self.bridge = Bridge(self.in_channel*2**(self.n_tail))
-
-        
+   
     ############################################################################
     # https://github.com/kevin-ssy/FishNet/blob/master/models/fishnet.py #183 ## 
     def _conv_bn_relu(self, in_channel, out_channel, stride=1):
@@ -102,24 +102,36 @@ class FishNet(nn.Module):
     def FishTail(self):
         n_tail = self.n_tail
         
-        self.channels = [self.in_channel*2**(i) for i in range(n_tail+1)] # out channels
-
-        self.tail_layer = nn.ModuleList([nn.Sequential(
-            DR_Block(self.channels[i]),
-            Residual_Block(self.channels[i]*2, self.channels[i]*2),
-            self.downsample) for i in range(n_tail)])
+        self.channels = []
+        for i in range(n_tail+1):
+            self.channels.append(self.in_channel*2**(i))
         
+        self.tail_layer = nn.ModuleList()
+        for i in range(n_tail):
+            layer = nn.Sequential(
+                DR_Block(self.channels[i]),
+                Residual_Block(self.channels[i]*2, self.channels[i]*2),
+                self.downsample)
+            self.tail_layer.append(layer)
+
     def FishBody(self):
         n_tail, n_body = self.n_tail, self.n_body
 
-        self.tail_body_resolution = nn.ModuleList([Residual_Block(c, c) for c in self.channels[::-1]])
+        self.tail_body_resolution = nn.ModuleList()
+        for i in range(len(self.channels[::-1])):
+            resolution = Residual_Block(self.channels[::-1][i], self.channels[::-1][i])
+            self.tail_body_resolution.append(resolution)
 
-        for n in range(self.n_body):
-            self.channels.append((self.channels[-1] + self.channels[n_tail-n])//2) 
+        for i in range(self.n_body):
+            self.channels.append((self.channels[-1] + self.channels[n_tail-i])//2) 
         
-        self.body_layer = nn.ModuleList([nn.Sequential(
-            UR_Block(self.channels[i]*2),
-            self.upsample) for i in range(n_tail+1, n_tail+n_body+1)])
+        self.body_layer = nn.ModuleList()
+        for i in range(n_tail+1, n_tail+n_body+1):
+            layer = nn.Sequential(
+                UR_Block(self.channels[i]*2),
+                self.upsample
+            )
+            self.body_layer.append(layer)
     
     def FishHead(self):
         n_tail, n_body, n_head = self.n_tail, self.n_body, self.n_head
@@ -135,11 +147,14 @@ class FishNet(nn.Module):
         resolution_layers.append(Residual_Block(self.channels[n_tail], self.channels[n_tail]))
 
         self.body_head_resolution =  nn.ModuleList(resolution_layers)
-        self.head_layer = nn.ModuleList([nn.Sequential(
-            Residual_Block(self.channels[i], self.channels[i]),
-            self.downsample) for i in range(n_tail+n_body+1, n_tail+n_body+n_head+1)])
-
-
+        self.head_layer = nn.ModuleList()
+        for i in range(n_tail+n_body+1, n_tail+n_body+n_head+1):
+            layer = nn.Sequential(
+                Residual_Block(self.channels[i], self.channels[i]),
+                self.downsample
+            )
+            self.head_layer.append(layer)
+    
     def forward(self, x):
 
         x = self.conv1(x)
@@ -178,6 +193,8 @@ class FishNet(nn.Module):
         probs       = self.Score(concat_feat).squeeze(-1).squeeze(-1)
         
         return probs
+
+
 
 def build_fishnet(args):
     return FishNet(
