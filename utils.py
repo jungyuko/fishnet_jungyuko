@@ -77,6 +77,7 @@ def config_logging(comment=None):
 
 
 def prepare_dataloader(
+            batch_size=256,
             img_size=32):
 
     img_size = img_size
@@ -101,7 +102,7 @@ def prepare_dataloader(
                         transform=train_transform)
     train_loader = torch.utils.data.DataLoader(
                             train_dataset, 
-                            batch_size=256, 
+                            batch_size=batch_size, 
                             shuffle=True
     )
 
@@ -111,7 +112,7 @@ def prepare_dataloader(
                         transform=test_transform)
     valid_loader = torch.utils.data.DataLoader(
                             valid_dataset, 
-                            batch_size=256, 
+                            batch_size=batch_size, 
                             shuffle=False
     )
 
@@ -121,7 +122,7 @@ def prepare_dataloader(
                         transform=test_transform)
     test_loader = torch.utils.data.DataLoader(
                             test_dataset, 
-                            batch_size=1, 
+                            batch_size=batch_size, 
                             shuffle=False
     )
 
