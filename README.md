@@ -14,8 +14,12 @@
     3. 일반적으로 backbone network로 사용되는 ResNet, [DenseNet](https://arxiv.org/abs/1608.06993)에 비해 더 적은 파라미터를 사용하여 더 좋은 성능을 얻음
 
 **ResNet vs FishNet**
-<img src="./fig/ResNet_vs_FishNet.PNG">
-
+* ResNet과 FishNet의 차이는?
+    <img src="./fig/ResNet_vs_FishNet.PNG">
+    * ResNet의 경우, Fig 1에서와 같이 input channel과 output channel 갯수간의 불일치를 처리하기 위해 skip connection에 stride를 사용하기 때문에 identity mapping을 적용할 수 없음
+    * FishNet의 경우, 다른 depth의 feature를 최종 output에 concat하여 연결하여 위의 문제를 해결함
+    * 즉, FishNet의 Residual block은 ResNet의 단점을 보완하여 설계됨
+    
 ## FrameWork
 * FishNet은 크게 아래 이미지와 같이 3가지 구조로 나뉨
     <img src="./fig/model_overview.PNG">
