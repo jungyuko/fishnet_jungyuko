@@ -19,7 +19,7 @@
     * ResNet의 경우, Fig 1에서와 같이 input channel과 output channel 갯수간의 불일치를 처리하기 위해 skip connection에 stride를 사용하기 때문에 identity mapping을 적용할 수 없음
     * FishNet의 경우, 다른 depth의 feature를 최종 output에 concat하여 연결하여 위의 문제를 해결함
     * 즉, FishNet의 Residual block은 ResNet의 단점을 보완하여 설계됨
-    
+
 ## FrameWork
 * FishNet은 크게 아래 이미지와 같이 3가지 구조로 나뉨
     <img src="./fig/model_overview.PNG">
@@ -98,8 +98,8 @@ FishNet
     |       | top-1 acc | top-5 acc |
     |-------|-----------|-----------|
     | train | 98.3131%  | 99.5223%  |
-    | valid | 83.0967%  | 96.7383%  |
-    | test  | 85.0600%  | 99.1800%  |
+    | valid | 83.1934%  | 96.8359%  |
+    | test  | 84.6000%  | 99.2700%  |
 
 
 ## More Idea
