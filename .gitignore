@@ -1,5 +1,8 @@
+*.log
+*.pth
 data/cifar-10-batches-py/*
 data/train/*
+data/valid/*
 data/test/*
 *.ipynb
 *.pyc
