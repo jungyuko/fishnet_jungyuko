@@ -72,6 +72,16 @@ FishNet
 
 ```
 
+* train
+    ```bash
+    python train.py
+    ```
+    * `train.py`의 학습 parameter는 Hyper-Parameters 참고
+
+* test
+    ```bash
+    python test.py
+    ```
 
 ## Dataset
 * [CIFAR Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)에서 CIFAR-10 Dataset 사용
